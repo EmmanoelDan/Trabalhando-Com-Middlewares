@@ -11,10 +11,23 @@ const users = [];
 
 function checksExistsUserAccount(request, response, next) {
   // Complete aqui
+ const {username} = request.headers;
+
+ if (!username) return response.status(400).json({error: 'username not exists'});
+
+ const user = users.find((user) => user.username === username);
+
+ if(!user) return response.status(404).json({error: 'User not exists'});
+
+ request.user = user;
+
+ return next();
+
 }
 
 function checksCreateTodosUserAvailability(request, response, next) {
   // Complete aqui
+  
 }
 
 function checksTodoExists(request, response, next) {
