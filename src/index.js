@@ -13,11 +13,11 @@ function checksExistsUserAccount(request, response, next) {
   // Complete aqui
  const {username} = request.headers;
 
- if (!username) return response.status(400).json({error: 'username not exists'});
+ if (!username) return response.status(400).json({ error: 'username not exists'});
 
  const user = users.find((user) => user.username === username);
 
- if(!user) return response.status(404).json({error: 'User not exists'});
+ if(!user) return response.status(404).json({ error: 'User not exists'});
 
  request.user = user;
 
@@ -35,25 +35,30 @@ function checksCreateTodosUserAvailability(request, response, next) {
   }else {
     return response.status(403).json({error : 'limit reached'});
   }
-  
 }
 
 function checksTodoExists(request, response, next) {
   // Complete aqui
-  const {username} = request.headers;
-  const {id} = request.params;
+  const { username } = request.headers;
+  const { id } = request.params;
 
-  const user = user.find((user) => user.username === username);
-  if (!user) return response.status(404).json({error: 'user not found'});
+  if (!validate(id)) {
+    return response.status(400).json({ error: 'id invalid'})
+  };
 
-  const checkValidUuid = validate(id);
-  if (!checkValidUuid) return response.status(400).json({error: 'id invalid'});
+  const user = users.find((user) => user.username === username);
+
+  if (!user) {
+    return response.status(404).json({ error: 'user not found'})
+  };
 
   const todo = user.todos.find(todo => todo.id === id);
-  if (!todo) return response.status(404).json({error: 'todo not found'})
+  if (!todo) {
+    return response.status(404).json({ error: 'todo not found'})
+  };
 
-  request.todo = todo;
   request.user = user;
+  request.todo = todo;
 
   return next();
 }
@@ -62,11 +67,11 @@ function findUserById(request, response, next) {
   // Complete aqui
   const {id} = request.params;
 
-  if(!id) return response.status(400).json({error: 'required id'})
+  const user = users.find((user) => user.id === id);
 
-  const user = user.find((user) => user.id === id);
-  if (!user) return response.status(404).json({error: 'user not found'})
-
+  if (!user) {
+    return response.status(404).json({ error: 'user not found'})
+  };
   request.user = user;
 
   return next();
